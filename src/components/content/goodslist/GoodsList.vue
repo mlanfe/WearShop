@@ -4,7 +4,7 @@
            v-for='(item,index) in goodsList' 
            :key='index'
             @click="enterDetail(item)">
-        <img :src="item.show.img" alt="" @load="imgLoad">
+        <img :src="item.image||item.show.img" alt="" @load="imgLoad">
         <div class="info">
           <span class="good-title">{{item.title}}</span>
           <span class="price">{{item.price}}</span>
@@ -35,7 +35,7 @@
           }
         })
       }
-    }
+    },
   }
 </script>
 
