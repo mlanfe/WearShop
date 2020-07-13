@@ -3,25 +3,31 @@
     <nav-bar class="home-nav">
       <div slot="middle">购物街</div>
     </nav-bar>
+    <tab-control 
+                :title='tabContrlTitle'
+                @tabControlClick = 'tabControlClick'
+                ref="tabControl1"
+                class="tabcontrol1"
+                v-show="isShowTabControl"
+                >
+    </tab-control>
     <scroll class="content" 
             ref='scroll'
             @scroll='scrollPostion'
             @pullingUp='loadMore'
             :probeType='3'
             :pullUpLoad='true'>
-      <home-swiper :banners='banners'></home-swiper>
+      <home-swiper :banners='banners' @swiperLoad='swiperLoad'></home-swiper>
       <home-recommend :recommends='recommends'></home-recommend>
       <home-popular/>
       <tab-control 
                   :title='tabContrlTitle'
-                  @tabControlClick = 'tabControlClick'>
+                  @tabControlClick = 'tabControlClick'
+                  ref="tabControl">
       </tab-control>
       <goods-list :goodsList="goods[currentTabControlType].list"></goods-list>
     </scroll>
     <back-top @click.native="tabTop" v-show="isShowBackTop" />
-    
-
-
   </div>
 </template>
 
@@ -64,7 +70,9 @@
         },
         currentTabControlType:'pop',
         currentTabControlIndex:1,
-        isShowBackTop: false
+        isShowBackTop: false,
+        tabOffsetTop:0,
+        isShowTabControl:false
 
       }
     },
@@ -91,18 +99,24 @@
           case 2:
             this.currentTabControlType = 'sell'
             break
-        }
+        };
+        this.$refs.tabControl1.currentIndex = index
+        this.$refs.tabControl.currentIndex = index
       },
-      
       tabTop(){
         this.$refs.scroll.scrollTO(0,1000)
       },
       scrollPostion(position){
-        this.isShowBackTop = -position > 1000 ? true : false
+        this.isShowBackTop = (-position) > 1000
+        this.isShowTabControl = (-position) > (this.tabOffsetTop-44)
       },
       loadMore(){
         this.getHomeGoods(this.currentTabControlType)
       },
+      swiperLoad(){
+        this.tabOffsetTop = this.$refs.tabControl.$el.offsetTop
+      },
+      
       // --------------------------与网络请求相关的方法------------------------------
       getHomeMultidata(){
         getHomeMultidata().then(res => {
@@ -134,11 +148,17 @@
     right: 0;
     left: 0;
     z-index: 9;
-
+  }
+  .tabcontrol1{
+    position: fixed;
+    top: 44px;
+    right: 0;
+    left: 0;
+    z-index: 29;
+    background-color: #fff;
   }
   .content{
     height: calc(100vh - 93px);
     overflow: hidden;
-    
   }
 </style>

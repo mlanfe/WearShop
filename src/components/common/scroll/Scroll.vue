@@ -1,6 +1,4 @@
 <template>
-  <!-- bsscroll的容器元素只会为其第一个子元素添加滚动的功能, 所有要滚动的元素必须包裹在一个元素里 -->
-  <!-- 必须要容器元素设置高度 -->
   <div class="wrapper" ref="wrapper">
     <div class="content" >
       <slot></slot>
@@ -36,29 +34,18 @@
         this.scroll.finishPullUp()
       },
       refresh(){
-        console.log('--------------');
         this.scroll.refresh()
       },
     },
     mounted() {
-      // 不能再created钩子函数上使用new BScroll,因为组件被创建时, 模板没有渲染, this.$refs.wrapper可能是undefined
-      // ref不仅可以用在自定义组件上, 还可以用在原生html元素上
       this.scroll = new BScroll(this.$refs.wrapper, {
-        // 是否监听BScroll里面的点击事件, 默认值为false
         click: true,
-        // 默认值：0, 可选值：1、2、3
-        // 取值为0和1时候: 不监听滚动位置
-        // 取值为2时候: 手指滚动的过程中监听滚动位置,手指离开后(比如手指离开后的惯性滚动)不监听滚动位置
-        // 取值为3时候: 监听所有滚动的滚动位置
         probeType: this.probeType,
-        // 开启上拉加载功能
         pullUpLoad: this.pullUpLoad
       })
       this.scroll.on("scroll", (positon) => {
         this.$emit('scroll',positon.y)
       }),
-      // 发生一次pullingUp事件后, 必须调用scroll对象的finishPullUp(), 才能再次触发pullingUp事件
-      // finishPullUp()可以选择在pullingUp的事件处理程序从后端请求完数据后调用
       this.scroll.on("pullingUp", () => {
         this.$emit('pullingUp')
       })

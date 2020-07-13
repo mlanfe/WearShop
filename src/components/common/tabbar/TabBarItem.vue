@@ -36,12 +36,15 @@
     flex: 1;
   }
   .tab-bar-item img{
-    width: 26px;
-    height: 26px;
+    width: 24px;
+    height: 24px;
     vertical-align: middle;
 
     margin-top: 3px;
 
+  }
+  .tab-bar-item .txt{
+    font-size: 14px;
   }
   .tab-bar-item .active{
     color: #ff5777;
