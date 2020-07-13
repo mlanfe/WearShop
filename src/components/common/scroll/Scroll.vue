@@ -36,6 +36,9 @@
       refresh(){
         this.scroll.refresh()
       },
+      getPostionY(){
+        return this.scroll.y
+      }
     },
     mounted() {
       this.scroll = new BScroll(this.$refs.wrapper, {

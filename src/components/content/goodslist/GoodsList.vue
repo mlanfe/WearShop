@@ -1,6 +1,9 @@
 <template>
     <div class="goods-list">
-      <div class="goods-list-item" v-for='(item,index) in goodsList' :key='index'>
+      <div class="goods-list-item" 
+           v-for='(item,index) in goodsList' 
+           :key='index'
+            @click="enterDetail(item)">
         <img :src="item.show.img" alt="" @load="imgLoad">
         <div class="info">
           <span class="good-title">{{item.title}}</span>
@@ -23,6 +26,14 @@
     methods: {
       imgLoad(){
         this.$bus.$emit('itemImgLoad')
+      },
+      enterDetail(item){
+        this.$router.push({
+          path: '/detail',
+          query:{
+            id: item.iid
+          }
+        })
       }
     }
   }

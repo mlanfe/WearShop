@@ -72,7 +72,8 @@
         currentTabControlIndex:1,
         isShowBackTop: false,
         tabOffsetTop:0,
-        isShowTabControl:false
+        isShowTabControl:false,
+        positionY: 0
 
       }
     },
@@ -85,6 +86,15 @@
     mounted(){
       const refresh = debounce(this.$refs.scroll.refresh,100) 
       this.$bus.$on('itemImgLoad', refresh)
+    },
+    activated(){
+      // 必须refresh一下,不然可能出现滚动的问题, 并且要先refresh再做其他与滚动相关的操作
+      this.$refs.scroll.refresh()
+      this.$refs.scroll. scrollTO(this.positionY, 0)
+      
+    },
+    deactivated() {
+      this.positionY = this.$refs.scroll.getPostionY()
     },
     methods:{
       tabControlClick(index){
