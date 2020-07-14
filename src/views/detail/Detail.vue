@@ -1,7 +1,11 @@
 <template>
   <div id="detail">
-    <detail-nav-bar />
-    <scroll class="content" ref="scroll">
+    <detail-nav-bar ref="navBar" @titleClick='titleClick'/>
+    <scroll class="content" 
+            ref="scroll" 
+            @scroll='getPositionY'
+            :probeType='3'
+            :pullUpLoad="true">
       <detail-swiper :imgList='swiperData'/>
       <detail-base-info :goods='goods'/>
       <detail-shop-info :shop='shop'/>
@@ -10,7 +14,6 @@
       <detail-comment-info :comment-info='commentInfo' ref="comment"/>
       <goods-list :goodsList='recommends' ref="recommends"/>
     </scroll>
-    
   </div>
 </template>
 
@@ -27,6 +30,7 @@
   import GoodsList from 'components/content/goodslist/GoodsList'
 
   import {getDetailMultidata, getRecommend, Goods, Shop, GoodsParam} from 'network/detail'
+  import {itemListenerMixin} from 'common/mixin'
   
 
 
@@ -38,12 +42,12 @@
         itemId: '',
         swiperData: [],
         goods: {},
-        shop:{},
-        detailInfo:{},
-        paramInfo:{},
-        commentInfo:{},
-        recommends:[],
-        themeTopYs:[],
+        shop: {},
+        detailInfo: {},
+        paramInfo: {},
+        commentInfo: {},
+        recommends: [],
+        themeTopYs: [],
       }
     },
     components:{
@@ -57,6 +61,7 @@
       GoodsList,
       Scroll
     },
+    mixins:[itemListenerMixin],
     created(){
       this.itemId = this.$route.query.id
       getDetailMultidata(this.itemId).then(res => {
@@ -77,16 +82,36 @@
       })
       //3.请求详情页中推荐商品的数据
       getRecommend().then(res => {
-        console.log(res);
         this.recommends = res.data.data.list
       })
       
     },
     methods: {
+      titleClick(index){
+        this.currentIndex = index
+        this.$refs.scroll.scrollTO(-this.themeTopYs[index],200)
+      },
       imageLoad(){
         //解决页面无法滚动的bug
         this.$refs.scroll.refresh()
+        this.themeTopYs = []
+        this.themeTopYs.push(0)
+        this.themeTopYs.push(this.$refs.params.$el.offsetTop)
+        this.themeTopYs.push(this.$refs.comment.$el.offsetTop)
+        this.themeTopYs.push(this.$refs.recommends.$el.offsetTop)
+        this.themeTopYs.push(Number.MAX_VALUE)
+        console.log(this.themeTopYs);
       },
+      getPositionY(position){
+        let positionY = -position
+        let length = this.themeTopYs.length
+        for(let i=0; i < length-1; i++){
+          if((this.$refs.navBar.currentTitleIndex !== i) && (positionY < this.themeTopYs[i+1]) && (positionY >= this.themeTopYs[i]) ){
+            this.$refs.navBar.currentTitleIndex = i
+          }
+        }
+      },
+      
     },
   }
 </script>

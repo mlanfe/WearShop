@@ -26,6 +26,7 @@
                   ref="tabControl">
       </tab-control>
       <goods-list :goodsList="goods[currentTabControlType].list"></goods-list>
+      
     </scroll>
     <back-top @click.native="tabTop" v-show="isShowBackTop" />
   </div>
@@ -44,6 +45,8 @@
   import HomePopular from './childComps/HomePopular'
   
   import {debounce} from 'common/utils'
+  import {itemListenerMixin} from 'common/mixin'
+
   import {getHomeMultidata,getHomeGoods} from 'network/home'
 
   export default {
@@ -77,16 +80,14 @@
 
       }
     },
+    mixins:[itemListenerMixin],
     created(){
       this.getHomeMultidata()
       this.getHomeGoods('pop')
       this.getHomeGoods('new')
       this.getHomeGoods('sell')
     },
-    mounted(){
-      const refresh = debounce(this.$refs.scroll.refresh,100) 
-      this.$bus.$on('itemImgLoad', refresh)
-    },
+    
     activated(){
       // 必须refresh一下,不然可能出现滚动的问题, 并且要先refresh再做其他与滚动相关的操作
       this.$refs.scroll.refresh()
@@ -95,6 +96,7 @@
     },
     deactivated() {
       this.positionY = this.$refs.scroll.getPostionY()
+      this.$bus.$off('itemImgload', this.itemImgListener)
     },
     methods:{
       tabControlClick(index){
