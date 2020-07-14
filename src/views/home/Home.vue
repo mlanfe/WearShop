@@ -45,7 +45,7 @@
   import HomePopular from './childComps/HomePopular'
   
   import {debounce} from 'common/utils'
-  import {itemListenerMixin} from 'common/mixin'
+  import {itemListenerMixin, backTopMixin} from 'common/mixin'
 
   import {getHomeMultidata,getHomeGoods} from 'network/home'
 
@@ -59,7 +59,6 @@
       TabControl,
       GoodsList,
       Scroll,
-      BackTop
     },
     data(){
       return {
@@ -73,14 +72,13 @@
         },
         currentTabControlType:'pop',
         currentTabControlIndex:1,
-        isShowBackTop: false,
         tabOffsetTop:0,
         isShowTabControl:false,
         positionY: 0
 
       }
     },
-    mixins:[itemListenerMixin],
+    mixins:[itemListenerMixin, backTopMixin],
     created(){
       this.getHomeMultidata()
       this.getHomeGoods('pop')
@@ -114,9 +112,6 @@
         };
         this.$refs.tabControl1.currentIndex = index
         this.$refs.tabControl.currentIndex = index
-      },
-      tabTop(){
-        this.$refs.scroll.scrollTO(0,1000)
       },
       scrollPostion(position){
         this.isShowBackTop = (-position) > 1000

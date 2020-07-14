@@ -14,6 +14,8 @@
       <detail-comment-info :comment-info='commentInfo' ref="comment"/>
       <goods-list :goodsList='recommends' ref="recommends"/>
     </scroll>
+    <back-top @click.native="tabTop" v-show="isShowBackTop" />
+    <detail-bottom-bar class="bottom-bar" @addToCart="addToCart"/>
   </div>
 </template>
 
@@ -25,12 +27,14 @@
   import DetailParamInfo from './childComps/DetailParamInfo'
   import DetailGoodsInfo from './childComps/DetailGoodsInfo'
   import DetailCommentInfo from './childComps/DetailCommentInfo'
+  import DetailBottomBar from './childComps/DetailBottomBar'
 
   import Scroll from 'components/common/scroll/Scroll'
+  import BackTop from 'components/content/backtop/BackTop'
   import GoodsList from 'components/content/goodslist/GoodsList'
 
   import {getDetailMultidata, getRecommend, Goods, Shop, GoodsParam} from 'network/detail'
-  import {itemListenerMixin} from 'common/mixin'
+  import {itemListenerMixin, backTopMixin} from 'common/mixin'
   
 
 
@@ -59,9 +63,10 @@
       DetailGoodsInfo,
       DetailCommentInfo,
       GoodsList,
+      DetailBottomBar,
       Scroll
     },
-    mixins:[itemListenerMixin],
+    mixins:[itemListenerMixin, backTopMixin],
     created(){
       this.itemId = this.$route.query.id
       getDetailMultidata(this.itemId).then(res => {
@@ -100,10 +105,10 @@
         this.themeTopYs.push(this.$refs.comment.$el.offsetTop)
         this.themeTopYs.push(this.$refs.recommends.$el.offsetTop)
         this.themeTopYs.push(Number.MAX_VALUE)
-        console.log(this.themeTopYs);
       },
       getPositionY(position){
         let positionY = -position
+        this.isShowBackTop = (positionY) > 1000
         let length = this.themeTopYs.length
         for(let i=0; i < length-1; i++){
           if((this.$refs.navBar.currentTitleIndex !== i) && (positionY < this.themeTopYs[i+1]) && (positionY >= this.themeTopYs[i]) ){
@@ -111,6 +116,23 @@
           }
         }
       },
+      //监听加入购物车的点击事件
+      addToCart(){
+        //1.获取购物车需要展示的信息
+        const product = {};
+        product.img = this.swiperData[0];
+        product.title = this.goods.title;
+        product.desc = this.goods.desc;
+        product.price = this.goods.realPrice;
+        product.iid = this.itemId;
+        // //2.将商品添加到购物车
+        // // 方法一: 用mapActions辅助函数
+        // this.addCart(product).then(res => this.$toast.showMessage(res))
+        // 方法二: 直接通过this.$store.dispatch,不使用mapActions辅助函数
+        // this.$store.dispatch('addCart', product).then(res => console.log(res))
+        this.$store.dispatch('addToCart', product)
+        console.log(product);
+      }
       
     },
   }
@@ -124,5 +146,9 @@
   .content{
     overflow: hidden;
     height: calc(100vh - 93px);
+  }
+  .bottom-bar{
+    position: relative;
+    z-index: 39;
   }
 </style>

@@ -1,7 +1,6 @@
 import {debounce} from './utils.js'
 import BackTop from 'components/content/backtop/BackTop'
 
-
 export const itemListenerMixin = {
   data(){
     return{
@@ -27,8 +26,8 @@ export const backTopMixin = {
   },
   methods: {
      //返回顶部按钮发生点击的事件处理程序
-     backClick(){
-      this.$refs.scroll.scrollTo(0,0,300)
+     tabTop(){
+      this.$refs.scroll.scrollTO(0,300)
     },
   },
 }
