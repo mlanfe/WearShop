@@ -24,15 +24,19 @@ const store = new Vuex.Store({
   },
   actions:{
     addToCart(context, payLoad){
-      let oldProduct = context.state.cartList.find(item => item.iid == payLoad.iid)
+      new Promise((resolve,reject) => {
+        let oldProduct = context.state.cartList.find(item => item.iid == payLoad.iid)
+        if(oldProduct){
+          context.commit('addCount', oldProduct)
+          resolve()
+        }else{
+          payLoad.count = 1
+          payLoad.checked = false
+          context.commit('addGoods', payLoad)
+          resolve()
+        }
+      })
       
-      if(oldProduct){
-        context.commit('addCount', oldProduct)
-      }else{
-        payLoad.count = 1
-        payLoad.checked = false
-        context.commit('addGoods', payLoad)
-      }
     }
   }
 })

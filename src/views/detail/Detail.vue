@@ -125,12 +125,9 @@
         product.desc = this.goods.desc;
         product.price = this.goods.realPrice;
         product.iid = this.itemId;
-        // //2.将商品添加到购物车
-        // // 方法一: 用mapActions辅助函数
-        // this.addCart(product).then(res => this.$toast.showMessage(res))
-        // 方法二: 直接通过this.$store.dispatch,不使用mapActions辅助函数
-        // this.$store.dispatch('addCart', product).then(res => console.log(res))
-        this.$store.dispatch('addToCart', product)
+        this.$store.dispatch('addToCart', product).then(()=>{
+          this.$toast.showMessage('添加至购物车~')
+        })
         console.log(product);
       }
       

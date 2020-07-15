@@ -10,8 +10,10 @@ export const itemListenerMixin = {
   mounted(){
     const refresh = debounce(this.$refs.scroll.refresh,100)  
     //对监听的事件进行保存,以便对其取消监听
-    this.itemImgListener =  () => {refresh()}
-    this.$bus.$on('itemImgload', this.itemImgListener)
+    this.itemImgListener = () => {
+      refresh()
+    }
+    this.$bus.$on('itemImgLoad', this.itemImgListener)
   } 
 }
 
