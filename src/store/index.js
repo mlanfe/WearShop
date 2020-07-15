@@ -7,6 +7,11 @@ const store = new Vuex.Store({
   state:{
     cartList:[]
   },
+  getters:{
+    cartListlength(state){
+      return state.cartList.length
+    }
+  },
   mutations:{
     addGoods(state, payLoad){
       state.cartList.push(payLoad)
@@ -25,6 +30,7 @@ const store = new Vuex.Store({
         context.commit('addCount', oldProduct)
       }else{
         payLoad.count = 1
+        payLoad.checked = false
         context.commit('addGoods', payLoad)
       }
     }
